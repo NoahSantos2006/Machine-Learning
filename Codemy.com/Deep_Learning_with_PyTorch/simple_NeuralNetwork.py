@@ -102,11 +102,57 @@ if __name__ == "__main__":
         optimizer.step()
     
     # Graph it out
-    plt.plot(range(epochs), losses)
-    plt.ylabel("loss/error")
-    plt.xlabel("Epoch")
+    # plt.plot(range(epochs), losses)
+    # plt.ylabel("loss/error")
+    # plt.xlabel("Epoch")
 
-    plt.show()
+    # plt.show()
 
+    # Evaluate Model on Test Data Set (validate model on test set)
+    with torch.no_grad(): # Turn off back propogation
 
+        y_eval = model.forward(X_test) # X_test are features from our test set, y_eval will be predictions
+        loss = criterion(y_eval, y_test) # Find the loss/error 
 
+    correct = 0
+    with torch.no_grad():
+        for i, data in enumerate(X_test):
+            y_val = model.forward(data)
+
+            if y_test[i] == 0:
+                x = "Setosa"
+            elif y_test[i] == 1:
+                x="Versicolor"
+            else:
+                x = 'Virginica'
+
+            # Will tell us what type of flower class out network thinks it is (highest number in tensor array)
+            print(f"{i+1}.) {str(y_val)} \t {x} \t {y_val.argmax().item()}")
+
+            # Correct or not
+            if y_val.argmax().item() == y_test[i]:
+
+                correct += 1
+    
+    print(f"We got {correct} correct!")
+
+    # Using model on new data
+
+    new_iris = torch.tensor([4.7, 3.2, 1.3, 0.2])
+
+    with torch.no_grad():
+        print(model(new_iris))
+    
+    newer_iris = torch.tensor([5.9, 3.0, 5.1, 1.8])
+
+    with torch.no_grad():
+        print(model(newer_iris))
+
+    # Save our NN model
+    torch.save(model.state_dict(), 'my_really_awesome_iris_model.pt')
+
+    # Load the Saved Model
+    new_model = Model()
+    new_model.load_state_dict(torch.load('my_really_awesome_iris_model.pt'))
+
+    new_model.eval()
