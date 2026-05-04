@@ -70,7 +70,6 @@ if __name__ == "__main__":
 
     from helper_functions import accuracy_fn
     from timeit import default_timer as timer
-    import tqdm
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(params=model0.parameters(), lr=0.1)
