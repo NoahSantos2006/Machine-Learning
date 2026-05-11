@@ -113,7 +113,11 @@ class FashionMNISTModelV2(nn.Module):
             nn.Flatten(),
             # Where did this in_features shape come from? 
             # It's because each layer of our network compresses and changes the shape of our inputs data.
-            nn.Linear(in_features=hidden_units*7*7, 
+
+            # We multiply hidden_units here by 49 because nn.Linear expects (batch_size, in_features)
+            # And when we did nn.Flatten the tensor shape went to (batch_size, channels * height * width)
+
+            nn.Linear(in_features=hidden_units*7*7,
                       out_features=output_shape)
         )
     
@@ -155,7 +159,7 @@ if __name__ == "__main__":
 
     train_features_batch, train_labels_batch = next(iter(train_dataloader))
 
-    model0 = FashtionMnistModel(input_shape=784, hidden_units=10, output_shape=len(class_names))
+    model0 = FashtionMnistModelV0(input_shape=784, hidden_units=10, output_shape=len(class_names))
 
     from helper_functions import accuracy_fn
     from timeit import default_timer as timer
@@ -164,7 +168,6 @@ if __name__ == "__main__":
     optimizer = torch.optim.SGD(params=model0.parameters(), lr=0.1)
 
     from tqdm.auto import tqdm
-
     torch.manual_seed(42)
     train_time_start_on_cpu = timer()
 
@@ -245,4 +248,5 @@ if __name__ == "__main__":
     nn.Conv2d() layer expected 4-dimensional tensor as input [batch_size, color_channels, height, width]
     
     """
+
 
